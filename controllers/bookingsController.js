@@ -1,14 +1,24 @@
 const express = require("express");
 const bookings = express.Router();
-const { getAllBookings, getBooking, createBooking, updateBooking, deleteBooking } = require("../queries/bookings")
+const { getAllBookings, getBookingsByMeetingRoomId, getBooking, createBooking, updateBooking, deleteBooking } = require("../queries/bookings")
 
 
 // INDEX
 bookings.get("/", async (req, res) => {
 
+    // ToDo
+    // get all bookings with getBookingsByMeetingRoomId if there is a meetingRoomId
+    
     try {
-        const allBookings = await getAllBookings();
-        res.status(200).json(allBookings);
+        const { meetingRoomId } = req.query;
+
+        if (meetingRoomId) {
+            const bookingsByMeetingRoomId = await getBookingsByMeetingRoomId(meetingRoomId);
+            res.status(200).json(bookingsByMeetingRoomId);
+        } else {
+            const allBookings = await getAllBookings();
+            res.status(200).json(allBookings);
+        }
     } catch(err) {
         res.status(500).json({ error: err.message});
     }

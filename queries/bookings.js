@@ -6,16 +6,30 @@ const getAllBookings = async () => {
     return allBookings;
 };
 
+
+
+const getAllBookingsAndItsMeetingRoom = async (meetingRoomId) => {
+    const bookingsByMeetingRoomId = await db.any(
+        "SELECT bookings.* \
+        FROM bookings LEFT JOIN meeting_rooms ON bookings.meeting_room_id = meeting_rooms.id \
+        WHERE bookings.meeting_room_id=$1",
+    meetingRoomId);
+    return bookingsByMeetingRoomId;
+};
+const getBookingsByMeetingRoomId = async (meetingRoomId) => {
+    const bookingsByMeetingRoomId = await db.any(
+        "SELECT bookings.* \
+        FROM bookings LEFT JOIN meeting_rooms ON bookings.meeting_room_id = meeting_rooms.id \
+        WHERE bookings.meeting_room_id=$1",
+    meetingRoomId);
+    return bookingsByMeetingRoomId;
+};
+
 const getBooking = async (id) => {
     const oneBooking = await db.one("SELECT * FROM bookings WHERE id = $1", id);
     return oneBooking;
 };
 
-// INSERT INTO bookings (
-//     meeting_name, meeting_room_id, start_date, end_date, attendees
-// ) VALUES 
-// ('Scrum Standup', 2, '2022-03-23T17:00:00.000Z', '2022-03-23T17:30:00.000Z', 'jdoe@email.com, bdylan@email.com')
-// ;
 const createBooking = async (booking) => {
     const newBooking = await db.one(
         "INSERT INTO bookings (meeting_name, meeting_room_id, start_date, end_date, attendees) VALUES ($1, $2, $3, $4, $5) RETURNING *",
@@ -39,4 +53,4 @@ const updateBooking = async (id, booking) => {
 }
 
 
-module.exports = { getAllBookings, getBooking, createBooking, updateBooking, deleteBooking };
+module.exports = { getAllBookings, getBooking, getBookingsByMeetingRoomId, createBooking, updateBooking, deleteBooking };
