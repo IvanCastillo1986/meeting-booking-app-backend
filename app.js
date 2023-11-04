@@ -15,7 +15,7 @@ app.use('/bookings', bookingsController);
 
 // ROUTES
 app.get("/", (req, res) => {
-    res.send("Welcome to the clients booking API");
+    res.send("Welcome to the Meeting Room Booking API");
 });
 
 // ERROR ROUTE

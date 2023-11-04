@@ -1,6 +1,7 @@
 const express = require("express");
 const meetingRooms = express.Router();
 const { getAllMeetingRooms, getMeetingRoom, createMeetingRoom, updateMeetingRoom, deleteMeetingRoom } = require("../queries/meetingRooms")
+const { getBookingsForMeetingRoom } = require("../queries/bookings")
 
 
 // INDEX
@@ -15,16 +16,25 @@ meetingRooms.get("/", async (req, res) => {
 
 });
 
-// ToDo /meeting-rooms/:id/bookings
-// Retrieve all future bookings of a meeting room
-
 // SHOW
 meetingRooms.get("/:id", async (req, res) => {
     const { id } = req.params;
 
     try {
         const meetingRoom = await getMeetingRoom(id);
-        res.status(200).json({ meetingRoom });
+        res.status(200).json(meetingRoom);
+    } catch(err) {
+        res.status(500).json({ errorGettingMeetingRoom: err.message });
+    }
+});
+
+// Retrieve all future bookings of a meeting room
+meetingRooms.get("/:id/bookings", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const meetingRoomBookings = await getBookingsForMeetingRoom(id);
+        res.status(200).json(meetingRoomBookings);
     } catch(err) {
         res.status(500).json({ errorGettingMeetingRoom: err.message });
     }
@@ -37,7 +47,7 @@ meetingRooms.post("/", async (req, res) => {
     try {
         const newMeetingRoom = await createMeetingRoom(meetingRoom);
 
-        res.status(200).json({ newMeetingRoom: newMeetingRoom });
+        res.status(200).json(newMeetingRoom);
     } catch(err) {
         res.status(400).json({ errorCreatingMeetingRoom: err.message });
     }
