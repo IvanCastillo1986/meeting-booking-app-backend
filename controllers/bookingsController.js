@@ -1,7 +1,8 @@
 const express = require("express");
 const bookings = express.Router();
 const { getAllBookings, getBooking, getAllBookingsAndMeetingRoom, createBooking, 
-    updateBooking, deleteBooking, overlappingBookingsQuery } = require("../queries/bookings");
+    updateBooking, deleteBooking } = require("../queries/bookings");
+const { checkOverlappedBookings } = require("../validations/checkOverlappedBookings");
 
 
 // INDEX
@@ -36,16 +37,28 @@ bookings.get("/:id", async (req, res) => {
 // CREATE
 bookings.post("/", async (req, res) => {
     // ToDo: implement overlappedBookings validation here
+    console.log('calling bookings Create query. req.body:', req.body)
     const booking = req.body;
     const {meeting_room_id, start_date, end_date} = booking;
     
     booking.meeting_room_id = Number(booking.meeting_room_id);
     try {
-        // const overlappedBookings = await overlappingBookingsQuery(meeting_room_id, start_date, end_date);
+        const overlappedBookings = await checkOverlappedBookings(meeting_room_id, start_date, end_date);
 
-        const newBooking = await createBooking(booking);
+        if (overlappedBookings.length > 0) {
+            console.log('Bookings are overlapping:', overlappedBookings)
+            
+            res.status(200).json(overlappedBookings)
+            
+            // ToDo:  THEN in front-end, check if response is array. 
+            //        If it's an array, show user message that it's conflicting in times with other bookings
+            //        Eventually, change front-end to show the bookings that are currrently conflicting
 
-        res.status(200).json(newBooking);
+        } else {
+            const newBooking = await createBooking(booking);
+            
+            res.status(200).json(newBooking);
+        }
     } catch(err) {
         res.status(400).json({ errorCreatingBooking: err.message });
     }

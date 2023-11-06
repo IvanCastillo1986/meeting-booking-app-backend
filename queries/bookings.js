@@ -62,6 +62,9 @@ const deleteBooking = async (id) => {
     return deletedBooking;
 }
 
+
+// NOT USED
+
 const updateBooking = async (id, booking) => {
     const updatedBooking = await db.one(
         "UPDATE bookings SET name=$1, capacity=$2, floor=$3 \
@@ -73,26 +76,24 @@ const updateBooking = async (id, booking) => {
 
 // ToDo
 // VALIDATION FOR DATE/TIME
-const overlappingBookingsQuery = async (meeting_room_id, start_date, end_date) => {
-    // change the data type from text to timestamp for the query with TO_TIMESTAMP
-    // TO_TIMESTAMP takes two arguments: 
+// const overlappingBookingsQuery = async (meeting_room_id, start_date, end_date) => {
+//     // change the data type from text to timestamp for the query with TO_TIMESTAMP
+//     // TO_TIMESTAMP takes two arguments: 
     
 
-    // GET THIS TO WORK
-    const overlappedBookings = await db.any(
-        // `SELECT * FROM bookings WHERE meeting_room_id = $1 AND (TO_TIMESTAMP(start_date, 'YYYY-MM-DDTHH24:MI:SS.USZ')), (TO_TIMESTAMP(end_date, 'YYYY-MM-DDTHH24:MI:SS.USZ')) OVERLAPS (TO_TIMESTAMP($2, 'YYYY-MM-DDTHH24:MI:SS.USZ')), (TO_TIMESTAMP($3, 'YYYY-MM-DDTHH24:MI:SS.USZ'))`,
-        `SELECT * FROM bookings 
-        WHERE meeting_room_id = $1 
-        AND (TO_TIMESTAMP(start_date, 'YYYY-MM-DDTHH24:MI:SS.USZ'), TO_TIMESTAMP(end_date, 'YYYY-MM-DDTHH24:MI:SS.USZ')) 
-        OVERLAPS (TO_TIMESTAMP($2, 'YYYY-MM-DDTHH24:MI:SS.USZ'), TO_TIMESTAMP($3, 'YYYY-MM-DDTHH24:MI:SS.USZ'))`,
-        [meeting_room_id, start_date, end_date]
-    );
-    // console.log('inside queries')
-    // console.log(overlappedBookings)
+//     // GET THIS TO WORK
+//     const overlappedBookings = await db.any(
+//         `SELECT * FROM bookings 
+//         WHERE meeting_room_id = $1 
+//         AND (TO_TIMESTAMP(start_date, 'YYYY-MM-DD"T"HH24:MI:SS.USZ'), TO_TIMESTAMP(end_date, 'YYYY-MM-DD"T"HH24:MI:SS.USZ')) 
+//         OVERLAPS (TO_TIMESTAMP($2, 'YYYY-MM-DD"T"HH24:MI:SS.USZ'), TO_TIMESTAMP($3, 'YYYY-MM-DD"T"HH24:MI:SS.USZ'))`,
+//         [meeting_room_id, start_date, end_date]
+//     );
+//     console.log('bookings are overlapping:', overlappedBookings)
 
-    return overlappedBookings
-};
+//     return overlappedBookings
+// };
 
 
 module.exports = { getAllBookings, getBooking, getAllBookingsAndMeetingRoom, getBookingsForMeetingRoom, 
-    getBookingsByMeetingRoomId, createBooking, updateBooking, deleteBooking, overlappingBookingsQuery };
+    getBookingsByMeetingRoomId, createBooking, updateBooking, deleteBooking };
